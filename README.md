@@ -1,5 +1,12 @@
 # Rust snippets and tips
 
+## Cargo
+### Add crates with the command line
+```shell
+cargo install cargo-edit
+cargo add <crate_name>
+```
+
 ## Memory
 ### Mesure memory consumption programmatically
 Works on Linux.
