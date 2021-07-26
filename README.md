@@ -38,6 +38,47 @@ fn init() -> Result<(), Report> {
 }
 ```
 
+### To report structured logs
+```shell
+cargo add tracing tracing-subscriber
+```
+```rust
+use color_eyre::Report;
+use tracing::info;
+use tracing_subscriber::EnvFilter;
+
+fn main() -> Result<(), Report> {
+    init()?;
+
+    info!("Hello");
+
+    let param1 = "First parameter";
+    let param2 = "Second parameter";
+
+    // % --> Display
+    // ? --> Debug
+    info!(%param1, param2 = ?param2, "An additional message");
+    
+    Ok(())
+}
+
+fn init() -> Result<(), Report> {
+    if std::env::var("RUST_LIB_BACKTRACE").is_err() {
+        std::env::set_var("RUST_LIB_BACKTRACE", "1")
+    }
+    color_eyre::install()?;
+
+    if std::env::var("RUST_LOG").is_err() {
+        std::env::set_var("RUST_LOG", "info")
+    }
+    tracing_subscriber::fmt::fmt()
+        .with_env_filter(EnvFilter::from_default_env())
+        .init();
+
+    Ok(())
+}
+```
+
 ## Memory
 ### Mesure memory consumption programmatically
 Works on Linux.
