@@ -11,6 +11,33 @@ To specify a specific crate version and some features
 cargo add tokio@1.9.0 --features full
 ```
 
+## Error handling
+### To nicely report errors in an "application"
+```shell
+cargo add color-eyre
+```
+In you main.rs file.
+```rust
+use color_eyre::Report;
+
+fn main() -> Result<(), Report> {
+    init()?;
+
+    // Some code
+
+    Ok(())
+}
+
+fn init() -> Result<(), Report> {
+    if std::env::var("RUST_LIB_BACKTRACE").is_err() {
+        std::env::set_var("RUST_LIB_BACKTRACE", "1")
+    }
+    color_eyre::install()?;
+
+    Ok(())
+}
+```
+
 ## Memory
 ### Mesure memory consumption programmatically
 Works on Linux.
