@@ -79,6 +79,11 @@ fn init() -> Result<(), Report> {
 }
 ```
 
+### To enable backtrace
+```shell
+RUST_BACKTRACE=1 cargo run
+```
+
 ## Memory
 ### Mesure memory consumption programmatically
 Works on Linux.
