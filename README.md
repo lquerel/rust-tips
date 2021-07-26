@@ -6,6 +6,10 @@
 cargo install cargo-edit
 cargo add <crate_name>
 ```
+To specify a specific crate version and some features
+```shell
+cargo add tokio@1.9.0 --features full
+```
 
 ## Memory
 ### Mesure memory consumption programmatically
