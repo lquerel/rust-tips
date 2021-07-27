@@ -50,6 +50,8 @@ Starting your app
 (gdb) c
 ... continue
 ...
+(gdb) info threads
+... display info on threads
 ```
 
 ## Error handling
