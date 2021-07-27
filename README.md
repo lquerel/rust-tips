@@ -16,6 +16,12 @@ To remove a crate.
 cargo rm <crate>
 ```
 
+### Detect unused crates
+```shell
+cargo install cargo-udeps --locked
+cargo +nightly udeps
+```
+
 ## Debugging
 ### Configure log level and more
 To set the default log level to info and set the log level to debug for a specific crate.
@@ -57,6 +63,12 @@ Starting your app
 ...
 (gdb) info threads
 ... display info on threads
+```
+
+To stop a program right before it exits
+```shell
+(gdb) catch syscall exit exit_group
+(gdb) r
 ```
 
 ## Error handling
