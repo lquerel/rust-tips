@@ -11,6 +11,11 @@ To specify a specific crate version and some features
 cargo add tokio@1.9.0 --features full
 ```
 
+To remove a crate.
+```shell
+cargo rm <crate>
+```
+
 ## Debugging
 ### Configure log level and more
 To set the default log level to info and set the log level to debug for a specific crate.
