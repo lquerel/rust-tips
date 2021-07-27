@@ -11,6 +11,12 @@ To specify a specific crate version and some features
 cargo add tokio@1.9.0 --features full
 ```
 
+## Debugging
+### Debug a segfault with GDB
+```shell
+cargo build && gdb --quiet --args ./target/debug/<your_app>
+```
+
 ## Error handling
 ### To nicely report errors in an "application"
 ```shell
