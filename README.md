@@ -18,6 +18,21 @@ To set the default log level to info and set the log level to debug for a specif
 RUST_LOG=info,<specific_crate>=debug cargo run
 ```
 
+### Trace all the socket connections
+```shell
+cargo build && strace -e 'connect' ./target/debug/<your_app>
+```
+
+To only keep strace outputs.
+```shell
+cargo build && strace -e 'connect' ./target/debug/<your_app> > /dev/null
+```
+
+To trace all the connections form the children (threads)
+```shell
+cargo build --quiet --release && strace -f -e 'connect' ./target/release/<your_app>
+```
+
 ### Debug a segfault with GDB
 ```shell
 cargo build && gdb --quiet --args ./target/debug/<your_app>
