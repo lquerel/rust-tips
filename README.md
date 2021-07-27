@@ -38,6 +38,20 @@ cargo build --quiet --release && strace -f -e 'connect' ./target/release/<your_a
 cargo build && gdb --quiet --args ./target/debug/<your_app>
 ```
 
+### Set a breakpoint on a specific syscall
+In the following example we set a breakpoint on the system call "connect" (i.e. socket connect).
+```shell
+cargo build --quiet && gdb --quiet --args ./target/debug/<your_app>
+(gdb) catch syscall connect
+(gdb) r
+Starting your app
+...
+<stop on the cathpoint>
+(gdb) c
+... continue
+...
+```
+
 ## Error handling
 ### To nicely report errors in an "application"
 ```shell
