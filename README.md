@@ -12,6 +12,12 @@ cargo add tokio@1.9.0 --features full
 ```
 
 ## Debugging
+### Configure log level and more
+To set the default log level to info and set the log level to debug for a specific crate.
+```shell
+RUST_LOG=info,<specific_crate>=debug cargo run
+```
+
 ### Debug a segfault with GDB
 ```shell
 cargo build && gdb --quiet --args ./target/debug/<your_app>
