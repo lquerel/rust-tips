@@ -90,14 +90,18 @@ fn main() -> Result<(), Report> {
 }
 
 fn init() -> Result<(), Report> {
-    if std::env::var("RUST_LIB_BACKTRACE").is_err() {
-        std::env::set_var("RUST_LIB_BACKTRACE", "1")
+    if std::env::var("RUST_BACKTRACE").is_err() {
+        std::env::set_var("RUST_BACKTRACE", "1")
     }
     color_eyre::install()?;
 
     Ok(())
 }
 ```
+
+* If you want panics and errors to both have backtraces, set RUST_BACKTRACE=1;
+* If you want only errors to have backtraces, set RUST_LIB_BACKTRACE=1;
+* If you want only panics to have backtraces, set RUST_BACKTRACE=1 and RUST_LIB_BACKTRACE=0.
 
 ### To report structured logs
 ```shell
