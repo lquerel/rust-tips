@@ -22,7 +22,6 @@ cargo install cargo-udeps --locked
 cargo +nightly udeps
 ```
 
-
 ## Debugging
 ### Configure log level and more
 To set the default log level to info and set the log level to debug for a specific crate.
@@ -35,7 +34,7 @@ RUST_LOG=info,<specific_crate>=debug cargo run
 cargo build && strace -e 'connect' ./target/debug/<your_app>
 ```
 
-To only keep strace outputs.
+To keep strace outputs.
 ```shell
 cargo build && strace -e 'connect' ./target/debug/<your_app> > /dev/null
 ```
@@ -150,6 +149,27 @@ RUST_BACKTRACE=1 cargo run
 ```
 
 ## Memory
+### Size of a value
+```rust
+struct Container<T> {
+    items: [T; 3],
+}
+
+fn main() {
+    use std::mem::size_of_val;
+
+    let cu8 = Container {
+        items: [1u8, 2u8, 3u8],
+    };
+		println!("size of cu8 = {} bytes", size_of_val(&cu8));  // returns 3
+
+    let cu32 = Container {
+        items: [1u32, 2u32, 3u32],
+    };
+    println!("size of cu32 = {} bytes", size_of_val(&cu32));  // returns 12
+}
+```
+
 ### Mesure memory consumption programmatically
 Works on Linux.
 ```shell
@@ -177,4 +197,27 @@ let _buf = vec![0i64; 16];
 epoch.advance().unwrap();
 let allocated_after = allocated_mib.read().unwrap();
 println!("{} bytes allocated", allocated_after - allocated_before);
+```
+
+## Compiler explorer
+### Generate assembler from a Rust program
+```
+https://rust.godbolt.org
+```
+
+## Iterator
+### Chain multiple iterators
+```rust
+let a = 0..3;
+let b = 3..6;
+let c = 6..9;
+let all = a.chain(b).chain(c);
+```
+
+## Lifetime
+### Lifetime on generic type parameter 
+```rust
+pub fn values<'a>(&'a self) -> Box<Iterator<Item = &i32> + 'a> {
+    // ...
+}
 ```
