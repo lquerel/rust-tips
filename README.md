@@ -1,5 +1,8 @@
 # Rust snippets and tips
 
+## Links to other pages
+* [Memory management and optimization](memory.md)
+
 ## Cargo
 ### Add crates with the command line
 ```shell
@@ -146,57 +149,6 @@ fn init() -> Result<(), Report> {
 ### To enable backtrace
 ```shell
 RUST_BACKTRACE=1 cargo run
-```
-
-## Memory
-### Size of a value
-```rust
-struct Container<T> {
-    items: [T; 3],
-}
-
-fn main() {
-    use std::mem::size_of_val;
-
-    let cu8 = Container {
-        items: [1u8, 2u8, 3u8],
-    };
-		println!("size of cu8 = {} bytes", size_of_val(&cu8));  // returns 3
-
-    let cu32 = Container {
-        items: [1u32, 2u32, 3u32],
-    };
-    println!("size of cu32 = {} bytes", size_of_val(&cu32));  // returns 12
-}
-```
-
-### Mesure memory consumption programmatically
-Works on Linux.
-```shell
-cargo add jemallocator
-cargo add jemalloc-ctl
-```
-
-In your main.rs file add the following global allocator declaration.
-```rust
-#[cfg(not(target_env = "msvc"))]
-#[global_allocator]
-static ALLOC: jemallocator::Jemalloc = jemallocator::Jemalloc;
-```
-
-In the rust file where you want to measure the memory consumption.
-```rust
-use jemalloc_ctl::{stats, epoch};
-
-// ...
-let epoch = epoch::mib().unwrap();
-let allocated_mib = stats::allocated::mib().unwrap();
-
-let allocated_before = allocated_mib.read().unwrap();
-let _buf = vec![0i64; 16];
-epoch.advance().unwrap();
-let allocated_after = allocated_mib.read().unwrap();
-println!("{} bytes allocated", allocated_after - allocated_before);
 ```
 
 ## Compiler explorer
