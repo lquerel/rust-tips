@@ -54,7 +54,9 @@ println!("{} bytes allocated", allocated_after - allocated_before);
 
 ## Use better memory allocators
 These days one of the best memory allocator is [mimalloc](https://github.com/microsoft/mimalloc) (Microsoft) followed by glibc 2.31 
-and [jemalloc](https://github.com/jemalloc/jemalloc) (Facebook) according to this [test](https://www.linkedin.com/pulse/testing-alternative-c-memory-allocators-pt-2-musl-mystery-gomes/).
+and [jemalloc](https://github.com/jemalloc/jemalloc) (Facebook) according to this [test](https://www.linkedin.com/pulse/testing-alternative-c-memory-allocators-pt-2-musl-mystery-gomes/) and this [one](https://www.linkedin.com/pulse/linux-testing-alternative-c-memory-allocators-emerson-gomes/). 
+
+> ToDo: Find more recent comparison tests.
 
 ## Change the default Musl memory allocator
 The default Musl memory allocator is super slow according to this [test](https://www.linkedin.com/pulse/testing-alternative-c-memory-allocators-pt-2-musl-mystery-gomes/).
