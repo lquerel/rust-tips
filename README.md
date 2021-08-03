@@ -2,6 +2,7 @@
 
 ## Links to other pages
 * [Memory management and optimization](memory.md)
+* [Linux distributions](linux-distributions.md)
 
 ## Cargo
 ### Add crates with the command line
