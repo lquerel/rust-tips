@@ -56,6 +56,11 @@ println!("{} bytes allocated", allocated_after - allocated_before);
 These days one of the best memory allocator is [mimalloc](https://github.com/microsoft/mimalloc) (Microsoft) followed by glibc 2.31 
 and [jemalloc](https://github.com/jemalloc/jemalloc) (Facebook) according to this [test](https://www.linkedin.com/pulse/testing-alternative-c-memory-allocators-pt-2-musl-mystery-gomes/) and this [one](https://www.linkedin.com/pulse/linux-testing-alternative-c-memory-allocators-emerson-gomes/). 
 
+An Alpine  preloaded with mimalloc can be found [here](https://github.com/emerzon/alpine-mimalloc).
+```shell
+docker pull emerzon/alpine-mimalloc
+```
+
 > ToDo: Find more recent comparison tests.
 
 ## Change the default Musl memory allocator
