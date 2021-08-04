@@ -35,6 +35,20 @@ cargo tree -p <sub-crate>
 cargo tree —features serde_json 
 ```
 
+### Dependency resolution (summary of this [page](https://doc.rust-lang.org/cargo/reference/resolver.html))
+Rule 1: versions are considered compatible if their left-most *non-zero* major/minor/patch component is the same. 
+Rule 2: for versions with leading zeros (could be on multiple levels), the rule 1 is applied once the zeros are removed.
+
+Some examples to illustrate these rules:
+* 1.0.1 and 1.3.4 are considered compatible. 
+* 0.1.0 and 0.1.2 are considered compatible.
+* 0.1.0 and 0.2.0 are not compatible.
+* 0.0.1 and 0.0.2 are not compatible.
+
+When multiple packages specify a dependency for a common package, the resolver attempts to ensure that they use the same version of that common package, as long as they are within a SemVer compatibility range. It also attempts to use the greatest version currently available within that compatibility range. 
+
+If multiple packages have a common dependency with semver-incompatible versions, then Cargo will allow this, but will build two separate copies of the dependency. 
+
 ## Debugging
 ### Configure log level and more
 To set the default log level to info and set the log level to debug for a specific crate.
