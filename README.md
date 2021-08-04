@@ -26,6 +26,15 @@ cargo install cargo-udeps --locked
 cargo +nightly udeps
 ```
 
+### List the dependency graph of a crate
+First install ‘cargo-tree’ and use one of the following commands depending on the use case.  
+```
+cargo install cargo-tree
+cargo tree
+cargo tree -p <sub-crate>
+cargo tree —features serde_json 
+```
+
 ## Debugging
 ### Configure log level and more
 To set the default log level to info and set the log level to debug for a specific crate.
