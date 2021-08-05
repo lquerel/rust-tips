@@ -1,6 +1,7 @@
 # Rust snippets and tips
 
 ## Links to other pages
+* [Async](async.md)
 * [Memory management and optimization](memory.md)
 * [Linux distributions](linux-distributions.md)
 * [Protobuf and gRPC](protobuf-grpc.md)
