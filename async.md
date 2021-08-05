@@ -18,24 +18,18 @@ let async_consumer = tokio::task::spawn(async move {
 });
 
 // Store the sender somewhere accessible by the non-async function. 
-// You might need a mutex for interior mutability reason.
 
 // ...
 tokio::join!((async_consumer);
 ```
 
-Inside your non-async method (provided that self is containing a mutex to the sender created previously) 
+Inside your non-async method (provided that self is containing the sender created previously) 
 ```rust
-let result = {
-  let mut sender = self.sender.lock();
+let result = self.sender.try_send(<your something>);
 
-  // Send the log entry (in a sync way) to the channel
-  sender.as_deref_mut().expect("sender not accessible").try_send(<your something>)
- };
-
- if let Err(err) = result {
+if let Err(err) = result {
   // Do something in case the channel is full or no longer open
- }
+}
 ```
 
 Another less recommended option is described [here](https://stackoverflow.com/a/66280983/2028877).
