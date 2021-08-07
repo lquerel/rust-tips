@@ -6,6 +6,7 @@
 * [Memory management and optimization](memory.md)
 * [Linux distributions](linux-distributions.md)
 * [Protobuf and gRPC](protobuf-grpc.md)
+* [Optimizations](optimization.md)
 
 ## Cargo
 ### Add crates with the command line
