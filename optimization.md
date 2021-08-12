@@ -20,3 +20,7 @@ https://www.nickwilcox.com/blog/autovec/
 http://cliffle.com/p/dangerust/6/
 https://github.com/novacrazy/numeric-array
 https://llvm.org/docs/Vectorizers.html (LLVM doc)
+
+## Unsafe cast
+
+`std::mem::transmute` is a very versatile function in Rust. It converts between any two types as long as they’re the same size, without running any code or changing any data -- it simply reinterprets the bits of one type as the other.
