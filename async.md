@@ -59,12 +59,14 @@ stream
 ```
 
 
-## Create a transactional MPSC tokio channel
+## Create a transactional receiver for a MPSC tokio channel
 
 List of crates to declare in you Cargo.toml.
 ```shell
 cargo add tokio futures tokio_stream
 ```
+
+The code below defines a transactional receiver for a bounded MPSC tokio channel.
 
 ```rust
 use tokio::sync::mpsc::channel;
@@ -103,5 +105,28 @@ impl<T> TransactionalReceiver<T> {
     pub async fn commit(&mut self) -> Option<T> {
         self.receiver.next().await
     }
+}
+```
+
+Now to use it.
+```rust
+use core::pin::Pin;
+
+// ...
+let (sender, mut receiver) = TransactionalChannel::new(100);
+
+loop {
+  let value = Pin::new(&mut receiver).recv().await;
+  // do some processing with the value
+  let success = do_some_processing(value);
+  
+  if success {
+    // if this processing is successful then 
+    receiver.commit().await;
+  } else {
+    // if this processing failed or need to be reconfigured 
+    reconfigure_processing(value);
+    // no commit so the next call to recv will be the same unprocessed data
+  }  
 }
 ```
