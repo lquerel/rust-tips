@@ -1,6 +1,7 @@
-# Async
+# Async Patterns
 
 ## Communicate from a non-async function to an async function which was called from an async function
+
 Call an async function from a non-async function (you don't control) that has been called from another async function is challenging. In this situation you can't 
 call the Tokio 'block_on' or 'spawn_blocking' function inside the sync function because a Tokio runtime nesting issue (i.e. Cannot start a runtime from within a 
 runtime).
@@ -34,7 +35,9 @@ if let Err(err) = result {
 
 Another less recommended option is described [here](https://stackoverflow.com/a/66280983/2028877).
 
+
 ## Convert a channel into an async stream
+
 You need to add tokio_stream to your Cargo.toml file.
 ```shell
 cargo add tokio_stream
@@ -53,4 +56,52 @@ stream
     // do something with the batch
     This closure must return a future
   }).await;
+```
+
+
+## Create a transactional MPSC tokio channel
+
+List of crates to declare in you Cargo.toml.
+```shell
+cargo add tokio futures tokio_stream
+```
+
+```rust
+use tokio::sync::mpsc::channel;
+use tokio::sync::mpsc::{Sender,Receiver};
+use futures::StreamExt;
+use tokio_stream::wrappers::ReceiverStream;
+use futures::prelude::stream::{Peekable, Peek};
+use core::pin::Pin;
+
+pub struct TransactionalChannel<T> {
+    sender: Sender<T>,
+    receiver: Peekable<ReceiverStream<T>>,
+}
+
+impl<T> TransactionalChannel<T> {
+    pub fn new(max_capacity: usize) -> (Sender<T>, TransactionalReceiver<T>) {
+        let (sender, receiver) = channel(max_capacity);
+
+        (sender, TransactionalReceiver::new(receiver))
+    }
+}
+
+pub struct TransactionalReceiver<T> {
+    receiver: Peekable<ReceiverStream<T>>
+}
+
+impl<T> TransactionalReceiver<T> {
+    fn new(receiver: Receiver<T>) -> Self {
+        Self { receiver: tokio_stream::wrappers::ReceiverStream::new(receiver).peekable() }
+    }
+
+    pub async fn recv(mut self: Pin<&mut Self>) -> Option<&T> {
+        Pin::new(&mut Pin::into_inner(self).receiver).peek().await
+    }
+
+    pub async fn commit(&mut self) -> Option<T> {
+        self.receiver.next().await
+    }
+}
 ```
