@@ -59,6 +59,14 @@ stream
 ```
 
 
+## Async stream with return value on termination
+
+Sometimes we need to communicate a return value when leaving an async stream.
+A oneshot tokio channel can be used for this purpose.
+```rust
+TBD oneshot
+```
+
 ## Create a transactional receiver for a MPSC tokio channel
 
 List of crates to declare in you Cargo.toml.
@@ -130,3 +138,4 @@ loop {
   }  
 }
 ```
+
