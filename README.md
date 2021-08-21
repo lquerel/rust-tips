@@ -1,7 +1,7 @@
 # Rust snippets and tips
 
 ## Links to other pages
-* [Async](async.md)
+* [Async Patterns](async.md)
 * [Code documentation](rustdoc.md)
 * [Memory management and optimization](memory.md)
 * [Linux distributions](linux-distributions.md)
