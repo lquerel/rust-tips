@@ -1,5 +1,11 @@
 # Async Patterns
 
+## Mutex (std::sync vs tokio::sync)
+
+A `std::Mutex` can be used with async. It's recommended to use it when the lock is never held across an await point.
+More details on the differences between `std::Mutex` and `tokio::Mutex` [here](https://tokio-rs.github.io/tokio/doc/tokio/sync/struct.Mutex.html#which-kind-of-mutex-should-you-use).
+
+
 ## Communicate from a non-async function to an async function which was called from an async function
 
 Call an async function from a non-async function (you don't control) that has been called from another async function is challenging. In this situation you can't 
