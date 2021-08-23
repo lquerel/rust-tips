@@ -8,6 +8,31 @@
 * [Protobuf and gRPC](protobuf-grpc.md)
 * [Optimizations](optimization.md)
 
+## Projet organisation
+Workspaces are a good way to organize projects of more than few thousand lines of code. A typical project organization is the following.
+
+```shell
+your_project/
+  Cargo.toml
+  Cargo.lock
+  crates/
+    your_project/
+    sub_crate_1/
+    sub_crate_2/
+    sub_crate_3/
+    ...
+```
+
+And your main `Cargo.toml` will look like.
+```toml
+[workspace]
+members = ["crates/*"]
+```
+
+The name of each directory is equal to the name of the crate.
+
+> This [blog post](https://matklad.github.io/2021/08/22/large-rust-workspaces.html) provides more details.
+
 ## Cargo
 ### Add crates with the command line
 ```shell
