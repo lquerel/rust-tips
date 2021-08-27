@@ -2,7 +2,11 @@
 
 ## Flamegraph
 
-TBD
+```shell
+cargo install flamegraph
+
+flamegraph <target binary> <call parameters>
+```
 
 ## Profiling with perf + Firefox
 
