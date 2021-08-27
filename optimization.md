@@ -43,8 +43,8 @@ See hyperfine
 
 ## Common optimizations 
 
-Enable LTO
-Use Jemalloc
-Try compile with RUSTFLAGS=’-C target-cpu=native’
-Use MaybeUnint
-Use different maps or hashers (aHash or FNV)
+* Enable LTO
+* Use Jemalloc
+* Try compile with RUSTFLAGS=’-C target-cpu=native’
+* Use MaybeUnint
+* Use different maps or hashers (aHash or FNV)
