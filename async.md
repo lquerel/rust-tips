@@ -148,7 +148,7 @@ loop {
 ## Connect a MPSC tokio channel with a fallible stream consumer
 
 
-A gRPC endpoint taking a stream as parameter is an example of fallible stream consumer. In many situations (network partition, timeout, server errors, ...) you may need to retry the call to the gRPC endpoint with the same channel. Unfortunately the receiver side of your channel is consumed once transformed into the stream on the first call. The following code is an example of solution to reuse the same receiver for each retry.
+A gRPC endpoint taking a stream as parameter is an example of fallible stream consumer. In many situations (network partition, timeout, server errors, ...) you may need to retry the call to the gRPC endpoint with the same channel. Unfortunately the receiver side of your channel is consumed once transformed into the stream on the first call. The following code is an example of solution to reuse the same receiver for each retry. For simplicity, the `channel_processor` method below represents a gRPC endpoint.
 
 ```rust
 use std::time::Duration;
