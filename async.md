@@ -145,3 +145,140 @@ loop {
 }
 ```
 
+## Connect a MPSC tokio channel with a fallible stream consumer
+
+
+A gRPC endpoint taking a stream as parameter is an example of fallible stream consumer. In many situations (network partition, timeout, server errors, ...) you may need to retry the call to the gRPC endpoint with the same channel. Unfortunately the receiver side of your channel is consumed once transformed into the stream on the first call. The following code is an example of solution to reuse the same receiver for each retry.
+
+```rust
+use std::time::Duration;
+use tokio::join;
+use futures_util::{StreamExt};
+use futures_core::Stream;
+use std::pin::Pin;
+use tokio::sync::mpsc::Receiver;
+use tokio::task::JoinHandle;
+use std::task::{Context, Poll};
+use tokio::sync::oneshot::error::TryRecvError;
+
+#[tokio::main]
+async fn main() {
+    let (sender, receiver) = tokio::sync::mpsc::channel(1000);
+
+    let task = channel_processor(receiver).await;
+
+    let mut counter = 0;
+    loop {
+        sender.send(format!("ack_id_{}", counter)).await;
+        counter += 1;
+        tokio::time::sleep(Duration::from_millis(100)).await;
+    }
+
+    join!(task);
+}
+
+async fn channel_processor(receiver: Receiver<String>) -> JoinHandle<()> {
+    tokio::spawn(async move {
+        let mut reusable_receiver = ReusableReceiver::new(receiver);
+
+        while let Err(error) = fallible_stream_consumer(reusable_receiver.stream()).await {
+            // Do something with the error, i.e. logging
+        }
+    })
+}
+
+async fn fallible_stream_consumer(mut stream: Pin<Box<dyn Stream<Item=String> + Send + Sync + 'static>>) -> Result<(), &str> {
+    let mut countdown_before_failure = 10;
+
+    loop {
+        if let Some(value) = stream.next().await {
+            println!("process {:?}", value);
+
+            countdown_before_failure -= 1;
+            if countdown_before_failure == 0 {
+                return Err("SomeError");
+            }
+        } else {
+            return Ok(());
+        }
+    }
+}
+
+
+pub struct ReusableReceiver<T> {
+    receiver: Option<Receiver<T>>,
+    receiver_oneshot: Option<tokio::sync::oneshot::Receiver<Receiver<T>>>,
+}
+
+pub struct ReusableReceiverStream<T> {
+    receiver: Option<Receiver<T>>,
+    sender_oneshot: Option<tokio::sync::oneshot::Sender<Receiver<T>>>,
+}
+
+impl<T> ReusableReceiver<T> where T: Sync + Send + 'static {
+    pub fn new(receiver: Receiver<T>) -> Self {
+        Self {
+            receiver: Some(receiver),
+            receiver_oneshot: None,
+        }
+    }
+
+    pub fn stream(&mut self) -> Pin<Box<dyn Stream<Item=T> + Send + Sync + 'static>> {
+        if self.receiver.is_none() {
+            self.recover_receiver();
+        }
+
+        let (sender_oneshot, receiver_oneshot) = tokio::sync::oneshot::channel();
+
+        self.receiver_oneshot = Some(receiver_oneshot);
+
+        Box::pin(ReusableReceiverStream {
+            receiver: std::mem::take(&mut self.receiver),
+            sender_oneshot: Some(sender_oneshot),
+        })
+    }
+
+    fn recover_receiver(&mut self) {
+        let mut receiver_oneshot = std::mem::take(&mut self.receiver_oneshot)
+            .expect("unexpected situation, need to be fixed");
+
+        loop {
+            match receiver_oneshot.try_recv() {
+                Err(TryRecvError::Closed) => {
+                    return;
+                }
+                Err(TryRecvError::Empty) => {}
+                Ok(receiver) => {
+                    self.receiver = Some(receiver);
+                    return;
+                }
+            }
+        }
+    }
+}
+
+impl<T> Drop for ReusableReceiverStream<T> {
+    fn drop(&mut self) {
+        let receiver = std::mem::take(&mut self.receiver)
+            .expect("unexpected situation, need to be fixed");
+        let sender_oneshot = std::mem::take(&mut self.sender_oneshot);
+        let result = sender_oneshot
+            .expect("unexpected situation, need to be fixed")
+            .send(receiver);
+        if let Err(error) = result {
+            println!("{:?}", error);
+        }
+    }
+}
+
+impl<T> Stream for ReusableReceiverStream<T> {
+    type Item = T;
+
+    fn poll_next(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
+        self.receiver
+            .as_mut()
+            .expect("unexpected situation, need to be fixed")
+            .poll_recv(cx)
+    }
+}
+```
