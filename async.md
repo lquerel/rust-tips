@@ -153,8 +153,7 @@ A gRPC endpoint taking a stream as parameter is an example of fallible stream co
 ```rust
 use std::time::Duration;
 use tokio::join;
-use futures_util::{StreamExt};
-use futures_core::Stream;
+use futures::{StreamExt, Stream};
 use std::pin::Pin;
 use tokio::sync::mpsc::Receiver;
 use tokio::task::JoinHandle;
