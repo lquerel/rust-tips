@@ -7,6 +7,7 @@
 * [Linux distributions](linux-distributions.md)
 * [Protobuf and gRPC](protobuf-grpc.md)
 * [Optimizations](optimization.md)
+* [Build](build.md)
 
 ## Projet organisation
 Workspaces are a good way to organize projects of more than few thousand lines of code. A typical project organization is the following.
