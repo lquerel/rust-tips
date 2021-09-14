@@ -1,5 +1,8 @@
 # Async Patterns
 
+## Detect blocking code 
+TBD https://rickyhan.com/jekyll/update/2019/12/22/convert-to-async-rust.html 
+ 
 ## Mutex (std::sync vs tokio::sync)
 
 A `std::Mutex` can be used with async. It's recommended to use it when the lock is never held across an await point.
