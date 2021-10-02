@@ -284,3 +284,25 @@ impl<T> Stream for ReusableReceiverStream<T> {
     }
 }
 ```
+
+## One tokio runtime per CPU core
+
+Pre-requisite: num_cpus, tokio 
+
+```rust
+let mut handlers = Vec::new();
+for i in 0..num_cpus::get() {
+    let h = std::thread::spawn(move || {
+        tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .unwrap()
+            .block_on(async_processing(i));
+    });
+    handlers.push(h);
+}
+
+for h in handlers {
+    h.join().unwrap();
+}
+```
