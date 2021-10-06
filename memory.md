@@ -67,4 +67,14 @@ docker pull emerzon/alpine-mimalloc
 The default Musl memory allocator is super slow according to this [test](https://www.linkedin.com/pulse/testing-alternative-c-memory-allocators-pt-2-musl-mystery-gomes/).
 Better to use [mimalloc](https://github.com/microsoft/mimalloc) (Microsoft) or [jemalloc](https://github.com/jemalloc/jemalloc) (Facebook).
 
-See ripgrep for an example.
+```shell
+cargo add mimalloc
+```
+
+Declare the mimalloc allocator in your main.rs file.
+```rust
+use mimalloc::MiMalloc;
+
+#[global_allocator]
+static GLOBAL: MiMalloc = MiMalloc;
+```
